@@ -1,0 +1,15 @@
+.anjuta/
+.anjuta_sym_db.db
+depcomp
+configure
+install-sh
+missing
+mkinstalldirs
+*.in
+*.m4
+Debug/
+*.guess
+*.sub
+ltmain.sh
+po/
+autom4te.cache/
