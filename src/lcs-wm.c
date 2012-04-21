@@ -1,3 +1,4 @@
+#include <glib/gprintf.h>
 #include <X11/Xlib.h>
 #include <clutter/clutter.h>
 #include <clutter/x11/clutter-x11.h>
@@ -11,6 +12,38 @@ typedef struct {
     long input_mode;
     unsigned long status;
 } MotifWMHints;
+
+static char *lcs_wm_string_new (const char *string)
+{
+    return g_strdup_printf ("lcs-wm-%s", string);
+}
+
+const ClutterColor *lcs_wm_clutter_color_get (ClutterStaticColor color) 
+{
+    return clutter_color_get_static (color);
+}
+
+void lcs_wm_clutter_actor_set_pink (ClutterActor *actor, 
+                                               int highlight)
+{
+    char *colorkey = lcs_wm_string_new ("color");
+    if (highlight)
+    {
+        ClutterColor *color = clutter_color_new (0, 0, 0, 0)
+            ;
+        clutter_actor_get_background_color (actor, color);
+        g_object_set_data (G_OBJECT (actor), colorkey, color);
+        clutter_actor_set_background_color (
+                        actor,
+                        lcs_wm_clutter_color_get (CLUTTER_COLOR_DARK_MAGENTA));
+                                                      
+    } else {
+        ClutterColor *color = g_object_get_data (G_OBJECT (actor), colorkey);
+        if (color)
+            clutter_actor_set_background_color (actor, color);
+    }
+}
+
 
 ClutterActor *lcs_wm_clutter_wrap_new (ClutterActor *actor, 
                                        ClutterBinAlignment xalign, 
@@ -83,6 +116,8 @@ ClutterActor *lcs_wm_clutter_texture_new_from_pixbuf_full (GdkPixbuf *pixbuf,
                                                  pixbuf,
                                                  width,
                                                  height);
+    clutter_texture_set_sync_size (CLUTTER_TEXTURE (texture),
+                                   TRUE);
     return texture;
 }
 

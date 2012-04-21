@@ -4,6 +4,8 @@
 #include <clutter/clutter.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+ClutterColor *lcs_wm_clutter_color_static_new (ClutterStaticColor color);
+
 ClutterActor *lcs_wm_clutter_wrap_new (ClutterActor *actor, 
                                        ClutterBinAlignment xalign, 
                                        ClutterBinAlignment yalign);
@@ -12,6 +14,9 @@ ClutterMargin *lcs_wm_clutter_margin_new_full (float left,
                                               float right, 
                                               float top, 
                                               float bottom);
+
+void lcs_wm_clutter_actor_set_pink (ClutterActor *actor, 
+                                    int highlight);
 
 void lcs_wm_clutter_texture_set_from_pixbuf (ClutterTexture *texture, 
                                              GdkPixbuf *pixbuf);
