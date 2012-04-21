@@ -19,13 +19,17 @@ static void on_window_opened (WnckScreen *screen,
     {
         ClutterLayoutManager *layout = 
             clutter_actor_get_layout_manager (taskbar);
+        ClutterActor *task = lcs_task_new (window, TRUE);
             clutter_box_layout_pack (CLUTTER_BOX_LAYOUT (layout),
-                                     lcs_task_new (window, TRUE),
+                                     task,
                                      FALSE,
                                      TRUE,
                                      FALSE,
                                      CLUTTER_BOX_ALIGNMENT_START,
                                      CLUTTER_BOX_ALIGNMENT_CENTER);
+        clutter_actor_set_size (clutter_actor_get_stage (taskbar),
+                                clutter_actor_get_width (taskbar),
+                                clutter_actor_get_height (taskbar));
     }
 }
 
@@ -39,6 +43,9 @@ static void on_window_closed (WnckScreen *screen,
     if (task)
     {
         clutter_actor_remove_child (taskbar, task);
+        clutter_actor_set_size (clutter_actor_get_stage (task),
+                                clutter_actor_get_width (task),
+                                clutter_actor_get_height (task));
     }
 }
 
@@ -143,10 +150,12 @@ static void lcs_taskbar_connect (ClutterActor *actor)
 ClutterActor *lcs_taskbar_new (int connect)
 {
     ClutterActor *taskbar = clutter_actor_new ();
-    ClutterLayoutManager *layout = clutter_box_layout_new ();
+    ClutterLayoutManager *layout = clutter_box_layout_new ();    
     clutter_box_layout_set_vertical (CLUTTER_BOX_LAYOUT (layout), TRUE);
     clutter_box_layout_set_spacing (CLUTTER_BOX_LAYOUT (layout), 2);
     clutter_actor_set_layout_manager (taskbar, layout);
+    clutter_actor_set_margin (taskbar, 
+                              lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
     if (connect)
         lcs_taskbar_connect (taskbar);
     return taskbar;

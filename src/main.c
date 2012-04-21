@@ -19,14 +19,20 @@ int main(int argc, char *argv[])
         fprintf (stderr, "error initializing clutter");
         exit (1);
     }
+    
     ClutterActor *stage = clutter_stage_new ();
+    clutter_actor_set_layout_manager (
+                         stage, 
+                         clutter_bin_layout_new (CLUTTER_BIN_ALIGNMENT_CENTER,
+                                                 CLUTTER_BIN_ALIGNMENT_CENTER));
     clutter_stage_set_use_alpha (CLUTTER_STAGE (stage), TRUE);
     clutter_actor_set_background_color (stage, 
-                                        clutter_color_new (255, 255, 255, 0));
-    ClutterActor *taskbar = lcs_taskbar_new ();
+                                        clutter_color_new (0, 0, 0, 32));
+    ClutterActor *taskbar = lcs_taskbar_new ();    
     clutter_actor_add_child (stage, taskbar);
     g_signal_connect (stage, "destroy", G_CALLBACK (on_stage_destroy), NULL);
     clutter_actor_show (stage);
+    
     long stagexid = lcs_wm_get_stage_xid (CLUTTER_STAGE(stage));
     lcs_wm_xwindow_set_decorated (stagexid, FALSE);
     lcs_wm_xwindow_set_above (stagexid);
