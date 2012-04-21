@@ -8,7 +8,12 @@
 
 char * xidstring_new (WnckWindow *window)
 {
-    return g_strdup_printf ("%ld", wnck_window_get_xid (window));
+    return g_strdup_printf ("xid-%ld", wnck_window_get_xid (window));
+}
+
+char *wrapstring_new (WnckWindow *window)
+{
+    return g_strdup_printf ("wrap-xid-%ld", wnck_window_get_xid (window));
 }
  
 static void on_window_opened (WnckScreen *screen, 
@@ -39,16 +44,20 @@ static void on_window_closed (WnckScreen *screen,
                               WnckWindow *window, 
                               ClutterActor *taskbar)
 {
-    ClutterActor *task = 
+    char *wrapxid = wrapstring_new (window);
+    ClutterActor *taskwrap = 
         clutter_container_find_child_by_name (CLUTTER_CONTAINER (taskbar), 
-                                              xidstring_new (window));
-    if (task)
+                                              wrapxid);
+    if (taskwrap)
     {
-        clutter_actor_remove_child (taskbar, task);
-        clutter_actor_set_size (clutter_actor_get_stage (task),
-                                clutter_actor_get_width (task),
-                                clutter_actor_get_height (task));
+        clutter_actor_remove_child (taskbar, taskwrap);
+        clutter_actor_set_size (clutter_actor_get_stage (taskbar),
+                                clutter_actor_get_width (taskbar),
+                                clutter_actor_get_height (taskbar));
+    } else {
+        fprintf (stderr, "no actor for name: %s\n", wrapxid);
     }
+    g_free (wrapxid);
 }
 
 static void on_window_changed (WnckWindow *window, ClutterActor *task)
@@ -111,6 +120,8 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
     ClutterActor *wrap = lcs_wm_clutter_wrap_new (task, 
                                                   CLUTTER_BIN_ALIGNMENT_FILL,
                                                   CLUTTER_BIN_ALIGNMENT_CENTER);
+    char *wrapstring = wrapstring_new (window);
+    clutter_actor_set_name (wrap, wrapstring);
     clutter_actor_set_background_color (wrap,
                                         clutter_color_new (255, 255, 255, 200));
     return wrap;
