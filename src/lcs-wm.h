@@ -4,6 +4,11 @@
 #include <clutter/clutter.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+void lcs_wm_gobject_set_boolean_property (gpointer object, 
+                                          const char *name,
+                                          int value);
+                                  
+
 ClutterColor *lcs_wm_clutter_color_static_new (ClutterStaticColor color);
 
 ClutterActor *lcs_wm_clutter_wrap_new (ClutterActor *actor, 

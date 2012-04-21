@@ -87,6 +87,7 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
     ClutterActor *task = clutter_actor_new ();
     clutter_actor_set_name (task, xidstring_new (window));
     ClutterLayoutManager *layout = clutter_box_layout_new ();
+    clutter_box_layout_set_spacing (CLUTTER_BOX_LAYOUT (layout), 4);
     clutter_actor_set_layout_manager (task, layout);
 
     ClutterActor *icon = clutter_texture_new ();
@@ -98,11 +99,15 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
                                "", 
                                clutter_color_new (0, 0, 0, 200));
     clutter_actor_set_name (name, "name");
+    clutter_actor_set_width (name, 320);
     clutter_text_set_single_line_mode (CLUTTER_TEXT (name), TRUE);
     clutter_text_set_ellipsize (CLUTTER_TEXT (name),
                                 PANGO_ELLIPSIZE_END);
+    ClutterActor *wrap = lcs_wm_clutter_wrap_new (name,
+                                                  CLUTTER_BIN_ALIGNMENT_START,
+                                                  CLUTTER_BIN_ALIGNMENT_CENTER);
     clutter_box_layout_pack (CLUTTER_BOX_LAYOUT (layout),
-                             name,
+                             wrap,
                              FALSE,
                              FALSE,
                              TRUE,
@@ -113,13 +118,12 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
     on_window_changed (window, task);
     clutter_actor_set_margin (task, 
                               lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
-    ClutterActor *wrap = lcs_wm_clutter_wrap_new (task, 
-                                                  CLUTTER_BIN_ALIGNMENT_FILL,
+    wrap = lcs_wm_clutter_wrap_new (task, CLUTTER_BIN_ALIGNMENT_FILL,
                                                   CLUTTER_BIN_ALIGNMENT_CENTER);
     char *wrapstring = wrapstring_new (window);
     clutter_actor_set_name (wrap, wrapstring);
     clutter_actor_set_background_color (wrap, clutter_color_new (255, 255, 255, 
-                                                                          200));
+                                                                          180));
     return wrap;
 }
 
@@ -145,12 +149,9 @@ static void on_taskbar_back_clicked (ClutterActor *actor,
     ClutterActor *stage = clutter_actor_get_stage (taskbar);
     clutter_actor_save_easing_state (taskbar);
     clutter_actor_save_easing_state (stage);
-    clutter_actor_set_easing_duration (taskbar, 750);
-    clutter_actor_set_easing_duration (stage, 750);
+    clutter_actor_set_easing_duration (taskbar, 250);
+    clutter_actor_set_easing_duration (stage, 250);
     clutter_actor_set_easing_mode (taskbar, CLUTTER_EASE_IN_QUAD);
-    clutter_actor_set_width (taskbar, 
-                             clutter_actor_get_margin_left (taskbar) + 
-                                      clutter_actor_get_margin_right (taskbar));
     clutter_actor_set_opacity (stage, 0);    
     clutter_actor_set_opacity (taskbar, 0);    
 }
@@ -189,26 +190,42 @@ static ClutterActor *lcs_taskbar_buttons_new (int connect,
     clutter_actor_set_layout_manager (buttons, layout);
 
     ClutterActor *button = 
-        lcs_taskbar_button_new ("go-next", 
+        lcs_taskbar_button_new ("go-up", 
                                 16, 
                                 G_CALLBACK (on_taskbar_back_clicked), 
                                 taskbar);
     clutter_actor_add_child (buttons, button);
+    clutter_box_layout_set_alignment (CLUTTER_BOX_LAYOUT (layout),
+                                      button,
+                                      CLUTTER_BIN_ALIGNMENT_CENTER,
+                                      CLUTTER_BIN_ALIGNMENT_CENTER);
 
-    button = lcs_taskbar_button_new ("application-exit",
+    button = 
+    lcs_taskbar_button_new ("go-down", 
+                            16, 
+                            G_CALLBACK (on_taskbar_back_clicked), 
+                            taskbar);
+    clutter_actor_add_child (buttons, button);
+    clutter_box_layout_set_alignment (CLUTTER_BOX_LAYOUT (layout),
+                                      button,
+                                      CLUTTER_BIN_ALIGNMENT_CENTER,
+                                      CLUTTER_BIN_ALIGNMENT_CENTER);
+    lcs_wm_gobject_set_boolean_property (button, "visible", FALSE);
+
+    button = lcs_taskbar_button_new ("window-close",
                                      16,
                                      G_CALLBACK (on_taskbar_quit_clicked),
-                                     taskbar);    
+                                     taskbar);
     ClutterActor *wrap = lcs_wm_clutter_wrap_new (button,
                                                   CLUTTER_BIN_ALIGNMENT_END,
-                                                  CLUTTER_BIN_ALIGNMENT_CENTER);
+                                                  CLUTTER_BIN_ALIGNMENT_CENTER);  
     clutter_actor_add_child (buttons, wrap);
     clutter_box_layout_set_expand (CLUTTER_BOX_LAYOUT (layout), wrap, TRUE);    
     clutter_box_layout_set_fill (CLUTTER_BOX_LAYOUT (layout), wrap, TRUE,
                                                                     FALSE);    
+    
     clutter_actor_set_margin (buttons, 
-                              lcs_wm_clutter_margin_new_full (0, 0, 6, 4));
-
+                              lcs_wm_clutter_margin_new_full (0, 0, 0, 2));
     g_signal_connect (taskbar, 
                       "button-press-event", 
                       G_CALLBACK (on_taskbar_back_clicked), 
@@ -225,8 +242,6 @@ ClutterActor *lcs_taskbar_new (int connect)
     clutter_box_layout_set_vertical (CLUTTER_BOX_LAYOUT (layout), TRUE);
     clutter_box_layout_set_spacing (CLUTTER_BOX_LAYOUT (layout), 2);
     clutter_actor_set_layout_manager (taskbar, layout);
-    clutter_actor_set_margin (taskbar, 
-                              lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
     ClutterActor *buttons = lcs_taskbar_buttons_new (connect, taskbar);
     clutter_box_layout_pack (CLUTTER_BOX_LAYOUT (layout),
                              buttons,

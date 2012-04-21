@@ -13,6 +13,17 @@ typedef struct {
     unsigned long status;
 } MotifWMHints;
 
+void lcs_wm_gobject_set_boolean_property (gpointer object, 
+                                          const char *name,
+                                          int value)
+{
+    GValue gvalue = G_VALUE_INIT;    
+    g_value_init (&gvalue, G_TYPE_BOOLEAN);
+    g_value_set_boolean (&gvalue, value);
+    g_object_set_property (G_OBJECT (object), "visible", &gvalue);
+
+}
+
 static char *lcs_wm_string_new (const char *string)
 {
     return g_strdup_printf ("lcs-wm-%s", string);
