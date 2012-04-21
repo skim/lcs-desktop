@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <gdk/gdk.h>
 #include <clutter/clutter.h>
+#include <gtk/gtk.h>
 #include "lcs-wm.h"
 #include "lcs-taskbar.h"
 
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
 {
     gdk_init (&argc, &argv);
     lcs_wm_clutter_enable_transparency (TRUE);
+    gtk_init (&argc, &argv);
     if (!clutter_init (&argc, &argv))
     {
         fprintf (stderr, "error initializing clutter");

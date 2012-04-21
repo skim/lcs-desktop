@@ -1,7 +1,9 @@
 #include "lcs-taskbar.h"
 #include <glib/gprintf.h>
+#include <gio/gio.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <pango/pango.h>
+#include <gtk/gtk.h>
 #include "lcs-wm.h"
 
 char * xidstring_new (WnckWindow *window)
@@ -58,20 +60,8 @@ static void on_window_changed (WnckWindow *window, ClutterActor *task)
     ClutterActor *icon = 
         clutter_container_find_child_by_name(CLUTTER_CONTAINER (task), "icon");
     GdkPixbuf *buf = wnck_window_get_icon (window);
-    int status = 
-        clutter_texture_set_from_rgb_data (CLUTTER_TEXTURE (icon),
-                                           gdk_pixbuf_get_pixels (buf),
-                                           TRUE,
-                                           32,
-                                           32,
-                                           gdk_pixbuf_get_rowstride (buf),
-                                           4,
-                                           CLUTTER_TEXTURE_NONE,
-                                           NULL);
-    if (!status)
-        fprintf (stderr, 
-                 "error loading icon: %s\n", 
-                 wnck_window_get_icon_name (window));
+    lcs_wm_clutter_texture_set_from_pixbuf (CLUTTER_TEXTURE (icon), buf);
+    
 }
 
 static void lcs_task_connect (ClutterActor *task, WnckWindow *window)
@@ -89,7 +79,6 @@ static void lcs_task_connect (ClutterActor *task, WnckWindow *window)
 
 ClutterActor *lcs_task_new (WnckWindow *window, int connect)
 {
-    ClutterMargin *margin = lcs_wm_clutter_margin_new_full (2, 2, 2, 2);
     ClutterActor *task = clutter_actor_new ();
     clutter_actor_set_name (task, xidstring_new (window));
     ClutterLayoutManager *layout = clutter_box_layout_new ();
@@ -97,13 +86,7 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
 
     ClutterActor *icon = clutter_texture_new ();
     clutter_actor_set_name (icon, "icon");
-    clutter_actor_set_margin (icon, margin);
-    ClutterActor *wrap = lcs_wm_clutter_wrap_new (icon, 
-                                                  CLUTTER_BIN_ALIGNMENT_CENTER, 
-                                                  CLUTTER_BIN_ALIGNMENT_CENTER);
-    ClutterColor *bgcolor = clutter_color_new (255, 255, 255, 200);
-    clutter_actor_set_background_color (wrap, bgcolor);
-    clutter_actor_add_child (task, wrap);
+    clutter_actor_add_child (task, icon);
 
     ClutterActor *name = 
         clutter_text_new_full ("Ubuntu 9", 
@@ -113,14 +96,8 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
     clutter_text_set_single_line_mode (CLUTTER_TEXT (name), TRUE);
     clutter_text_set_ellipsize (CLUTTER_TEXT (name),
                                 PANGO_ELLIPSIZE_END);
-    clutter_actor_set_margin (name, margin);
-    clutter_actor_set_width (name, 300);
-    wrap =lcs_wm_clutter_wrap_new (name,
-                                   CLUTTER_BIN_ALIGNMENT_START,
-                                   CLUTTER_BIN_ALIGNMENT_CENTER);
-    clutter_actor_set_background_color (wrap, bgcolor);
     clutter_box_layout_pack (CLUTTER_BOX_LAYOUT (layout),
-                             wrap,
+                             name,
                              FALSE,
                              FALSE,
                              TRUE,
@@ -129,7 +106,14 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
     if (connect)
         lcs_task_connect (task, window);
     on_window_changed (window, task);
-    return task;
+    clutter_actor_set_margin (task, 
+                              lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
+    ClutterActor *wrap = lcs_wm_clutter_wrap_new (task, 
+                                                  CLUTTER_BIN_ALIGNMENT_FILL,
+                                                  CLUTTER_BIN_ALIGNMENT_CENTER);
+    clutter_actor_set_background_color (wrap,
+                                        clutter_color_new (255, 255, 255, 200));
+    return wrap;
 }
 
 
@@ -147,6 +131,46 @@ static void lcs_taskbar_connect (ClutterActor *actor)
                       actor);
 }
 
+static void on_taskbar_back_clicked (ClutterActor *actor, 
+                                     ClutterEvent *event,
+                                     ClutterActor *taskbar)
+{
+    ClutterActor *stage = clutter_actor_get_stage (taskbar);
+    clutter_actor_save_easing_state (taskbar);
+    clutter_actor_save_easing_state (stage);
+    clutter_actor_set_easing_duration (taskbar, 750);
+    clutter_actor_set_easing_duration (stage, 750);
+    clutter_actor_set_easing_mode (taskbar, CLUTTER_EASE_IN_QUAD);
+    clutter_actor_set_width (taskbar, 20);
+    clutter_actor_set_opacity (stage, 0);    
+    clutter_actor_set_opacity (taskbar, 0);    
+}
+
+
+static ClutterActor *lcs_taskbar_buttons_new (int connect, 
+                                              ClutterActor *taskbar)
+{
+    ClutterActor *buttons = clutter_actor_new ();
+    ClutterLayoutManager *layout = clutter_box_layout_new ();
+    clutter_actor_set_layout_manager (buttons, layout);
+    ClutterActor *icon = lcs_wm_clutter_texture_new_from_icon ("go-next", 16);
+    clutter_actor_set_reactive (icon, connect);
+    clutter_actor_set_name (icon, "back");
+    clutter_actor_add_child (buttons, icon);
+    clutter_actor_set_margin (buttons, 
+                              lcs_wm_clutter_margin_new_full (0, 0, 4, 4));
+
+    if (connect)
+    {
+        g_signal_connect (icon, 
+                          "button-press-event", 
+                          G_CALLBACK (on_taskbar_back_clicked), 
+                          taskbar);
+    }
+    
+    return buttons;
+}
+
 ClutterActor *lcs_taskbar_new (int connect)
 {
     ClutterActor *taskbar = clutter_actor_new ();
@@ -156,7 +180,10 @@ ClutterActor *lcs_taskbar_new (int connect)
     clutter_actor_set_layout_manager (taskbar, layout);
     clutter_actor_set_margin (taskbar, 
                               lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
+    clutter_actor_add_child (taskbar, 
+                             lcs_taskbar_buttons_new (connect, taskbar));
     if (connect)
         lcs_taskbar_connect (taskbar);
+        clutter_actor_set_reactive (taskbar, TRUE);
     return taskbar;
 }

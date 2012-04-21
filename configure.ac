@@ -31,7 +31,9 @@ LT_INIT
 
 
 
-PKG_CHECK_MODULES(LCS_DESKTOP, pango
+PKG_CHECK_MODULES(LCS_DESKTOP, gtk+-3.0
+gio-2.0
+pango
 libwnck-3.0
 [gdk-3.0 clutter-1.0 ])
 

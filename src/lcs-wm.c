@@ -1,6 +1,8 @@
 #include <X11/Xlib.h>
 #include <clutter/clutter.h>
 #include <clutter/x11/clutter-x11.h>
+#include <gtk/gtk.h>
+#include "lcs-wm.h"
 
 typedef struct {
     unsigned long flags;
@@ -22,9 +24,9 @@ ClutterActor *lcs_wm_clutter_wrap_new (ClutterActor *actor,
 }
 
 ClutterMargin *lcs_wm_clutter_margin_new_full (float left, 
-                                              float right, 
-                                              float top, 
-                                              float bottom)
+                                               float right, 
+                                               float top, 
+                                               float bottom)
 {
     ClutterMargin *margin = clutter_margin_new ();
     margin->left = left;
@@ -32,6 +34,71 @@ ClutterMargin *lcs_wm_clutter_margin_new_full (float left,
     margin->top = top;
     margin->bottom = bottom;
     return margin;
+}
+
+void lcs_wm_clutter_texture_set_from_pixbuf_full (ClutterTexture *texture,
+                                                  GdkPixbuf *pixbuf,
+                                                  int width,
+                                                  int height)  
+{
+    int status = 
+        clutter_texture_set_from_rgb_data (CLUTTER_TEXTURE (texture),
+                                           gdk_pixbuf_get_pixels (pixbuf),
+                                           TRUE,
+                                           width,
+                                           height,
+                                           gdk_pixbuf_get_rowstride (pixbuf),
+                                           4,
+                                           CLUTTER_TEXTURE_NONE,
+                                           NULL);
+    if (!status)
+        fprintf (stderr, "error setting texture data from pixbuf");
+    clutter_texture_set_sync_size (texture, TRUE);
+}
+
+void lcs_wm_clutter_texture_set_from_pixbuf (ClutterTexture *texture,
+                                             GdkPixbuf *pixbuf)  
+{
+    lcs_wm_clutter_texture_set_from_pixbuf_full (
+                                                texture,
+                                                pixbuf,
+                                                gdk_pixbuf_get_width (pixbuf),
+                                                gdk_pixbuf_get_height (pixbuf));
+}
+ 
+
+ClutterActor *lcs_wm_clutter_texture_new_from_pixbuf (GdkPixbuf *pixbuf)
+{
+    ClutterActor *texture = clutter_texture_new ();
+    lcs_wm_clutter_texture_set_from_pixbuf (CLUTTER_TEXTURE (texture), pixbuf);
+    return texture;
+}
+
+ClutterActor *lcs_wm_clutter_texture_new_from_pixbuf_full (GdkPixbuf *pixbuf,
+                                                           int width,
+                                                           int height)
+{
+    ClutterActor *texture = clutter_texture_new ();
+    lcs_wm_clutter_texture_set_from_pixbuf_full (CLUTTER_TEXTURE (texture), 
+                                                 pixbuf,
+                                                 width,
+                                                 height);
+    return texture;
+}
+
+ClutterActor *lcs_wm_clutter_texture_new_from_icon (const char *icon_name, 
+                                                    int size)
+{
+    GtkIconTheme *icons = gtk_icon_theme_get_default ();
+    GtkIconInfo *iconinfo = 
+        gtk_icon_theme_lookup_icon (icons, 
+                                    icon_name, 
+                                    size, 
+                                    GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+    GdkPixbuf *buf = gtk_icon_info_load_icon (iconinfo, NULL);
+    
+    return lcs_wm_clutter_texture_new_from_pixbuf (buf);
+    
 }
 
 void lcs_wm_clutter_enable_transparency (int enabled)
@@ -62,8 +129,8 @@ void lcs_wm_xwindow_set_decorated (long xid, int decorated)
 }
 
 void lcs_wm_xwindow_change_property (long xid,
-                                    const char *property,
-                                    const char *value)
+                                     const char *property,
+                                     const char *value)
 {
     Display *display = NULL;
     Atom aprop, avalue;
@@ -88,7 +155,7 @@ void lcs_wm_xwindow_change_property (long xid,
 void lcs_wm_xwindow_set_above (long xid)
 {
     lcs_wm_xwindow_change_property (xid,
-                                   "_NET_WM_STATE",
-                                   "_NET_WM_STATE_ABOVE");
+                                    "_NET_WM_STATE",
+                                    "_NET_WM_STATE_ABOVE");
 }
 
