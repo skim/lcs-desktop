@@ -3,6 +3,13 @@
 
 #include <clutter/clutter.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#define WNCK_I_KNOW_THIS_IS_UNSTABLE
+#include <libwnck/libwnck.h>
+
+
+char *lcs_wm_xidstring_new (WnckWindow *window);
+
+char *lcs_wm_wrap_xidstring_new (WnckWindow *window);
 
 void lcs_wm_gobject_set_boolean_property (gpointer object, 
                                           const char *name,

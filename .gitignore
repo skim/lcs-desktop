@@ -1,3 +1,10 @@
+stamp-h1
+lcs_desktop
+Makefile
+*/.deps/
+libtool
+config.*
+*.o
 .anjuta/
 .anjuta_sym_db.db
 depcomp

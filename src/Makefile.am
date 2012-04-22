@@ -19,9 +19,13 @@ lcs_desktop_SOURCES = \
 	lcs-wm.c \
 	lcs-wm.h \
 	lcs-taskbar.c \
-	lcs-taskbar.h
+	lcs-taskbar.h \
+	lcs-taskbar-task.c \
+	lcs-taskbar-buttons.c
 
-lcs_desktop_LDFLAGS = 
+lcs_desktop_LDFLAGS =  \
+	-o \
+	lcs-desktop
 
 lcs_desktop_LDADD = $(LCS_DESKTOP_LIBS)
 

@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Created by Anjuta application wizard.
 
-AC_INIT(lcs_desktop, 0.1)
+AC_INIT([lcs_desktop], 0.1)
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -19,7 +19,7 @@ dnl Internationalization
 dnl ***************************************************************************
 IT_PROG_INTLTOOL([0.35.0])
 
-GETTEXT_PACKAGE=lcs_desktop
+GETTEXT_PACKAGE=[lcs_desktop]
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
 

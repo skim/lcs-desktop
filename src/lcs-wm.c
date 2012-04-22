@@ -13,6 +13,17 @@ typedef struct {
     unsigned long status;
 } MotifWMHints;
 
+char *lcs_wm_xidstring_new (WnckWindow *window)
+{
+    return g_strdup_printf ("xid-%ld", wnck_window_get_xid (window));
+}
+
+char *lcs_wm_wrap_xidstring_new (WnckWindow *window)
+{
+    return g_strdup_printf ("wrap-xid-%ld", wnck_window_get_xid (window));
+}
+
+
 void lcs_wm_gobject_set_boolean_property (gpointer object, 
                                           const char *name,
                                           int value)

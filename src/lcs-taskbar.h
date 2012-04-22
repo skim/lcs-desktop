@@ -8,5 +8,6 @@
 
 ClutterActor *lcs_task_new (WnckWindow *window, int connect);
 ClutterActor *lcs_taskbar_new ();
+ClutterActor *lcs_taskbar_buttons_new (int connect, ClutterActor *taskbar);
 
 #endif /*RABKSAT_SCL _H */
