@@ -13,11 +13,12 @@ static void on_taskbar_back_clicked (ClutterActor *actor,
     ClutterActor *stage = clutter_actor_get_stage (taskbar);
     clutter_actor_save_easing_state (taskbar);
     clutter_actor_save_easing_state (stage);
-    clutter_actor_set_easing_duration (taskbar, 250);
-    clutter_actor_set_easing_duration (stage, 250);
-    clutter_actor_set_easing_mode (taskbar, CLUTTER_EASE_IN_QUAD);
+    clutter_actor_set_easing_duration (taskbar, 500);
+    clutter_actor_set_easing_duration (stage, 500);
+    clutter_actor_set_easing_mode (taskbar, CLUTTER_EASE_OUT_QUAD);
+    clutter_actor_set_easing_mode (stage, CLUTTER_EASE_IN_QUAD);
     clutter_actor_set_opacity (stage, 0);    
-    clutter_actor_set_opacity (taskbar, 0);    
+    clutter_actor_set_opacity (taskbar, 0);
 }
 
 static void on_taskbar_quit_clicked (ClutterActor *actor,
