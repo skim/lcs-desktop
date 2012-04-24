@@ -15,13 +15,13 @@ static void on_taskbar_show_clicked (ClutterActor *actor,
 	GList *child = clutter_actor_get_children(taskbar);
 	for (; child; child = child->next)
 	{
-		lcs_wm_clutter_actor_set_visible (child->data, TRUE);
+		lcs_clutter_actor_set_visible (child->data, TRUE);
 	}
     g_list_free (child);
 	ClutterActor *minibuttons = 
 		clutter_container_find_child_by_name (CLUTTER_CONTAINER (taskbar),
 		                                      "mini-buttons");
-	lcs_wm_clutter_actor_set_visible (minibuttons, FALSE);
+	lcs_clutter_actor_set_visible (minibuttons, FALSE);
         clutter_actor_set_size (stage,
                                 clutter_actor_get_width (taskbar),
                                 clutter_actor_get_height (taskbar));
@@ -35,13 +35,13 @@ static void on_taskbar_hide_clicked (ClutterActor *actor,
 	GList *child = clutter_actor_get_children(taskbar);
 	for (; child; child = child->next)
 	{
-		lcs_wm_clutter_actor_set_visible (child->data, FALSE);
+		lcs_clutter_actor_set_visible (child->data, FALSE);
 	}
     g_list_free (child);
 	ClutterActor *minibuttons = 
 		clutter_container_find_child_by_name (CLUTTER_CONTAINER (taskbar),
 		                                      "mini-buttons");
-	lcs_wm_clutter_actor_set_visible (minibuttons, TRUE);
+	lcs_clutter_actor_set_visible (minibuttons, TRUE);
 	float w, h;
 	clutter_actor_get_size (minibuttons, &w, &h);
 	ClutterMargin margin;
@@ -66,7 +66,7 @@ static ClutterActor *lcs_taskbar_button_new (const char *icon_name,
                                              GCallback handler,
                                              gpointer data)
 {
-    ClutterActor *icon = lcs_wm_clutter_texture_new_from_icon (icon_name, 16);
+    ClutterActor *icon = lcs_clutter_texture_new_from_icon (icon_name, 16);
     clutter_actor_set_reactive (icon, handler != NULL);
     clutter_actor_set_name (icon, "back");    
     if (handler)
@@ -102,7 +102,7 @@ ClutterActor *lcs_taskbar_buttons_new (int connect, ClutterActor *taskbar)
 	clutter_text_new_full ("Ubuntu 9", 
                            "Taskbar", 
                            clutter_color_new (0, 0, 0, 200));	
-	clutter_actor_set_margin (text, lcs_wm_clutter_margin_new_full (4, 4, 0,0));	
+	clutter_actor_set_margin (text, lcs_clutter_margin_new_full (4, 4, 0,0));	
 	clutter_actor_add_child (buttons, text);
 
 	
@@ -111,7 +111,7 @@ ClutterActor *lcs_taskbar_buttons_new (int connect, ClutterActor *taskbar)
 	                        16,
                             G_CALLBACK (on_taskbar_quit_clicked),
                             taskbar);
-    ClutterActor *wrap = lcs_wm_clutter_wrap_new (close_button,
+    ClutterActor *wrap = lcs_clutter_wrap_new (close_button,
                                                   CLUTTER_BIN_ALIGNMENT_END,
                                                   CLUTTER_BIN_ALIGNMENT_CENTER);  
 
@@ -121,7 +121,7 @@ ClutterActor *lcs_taskbar_buttons_new (int connect, ClutterActor *taskbar)
                                                                     FALSE);    
     
     clutter_actor_set_margin (buttons, 
-                              lcs_wm_clutter_margin_new_full (0, 0, 0, 2));
+                              lcs_clutter_margin_new_full (0, 0, 0, 2));
     g_signal_connect (hide_button, 
                       "button-press-event", 
                       G_CALLBACK (on_taskbar_hide_clicked), 
@@ -148,7 +148,7 @@ ClutterActor *lcs_taskbar_mini_buttons_new (int connect, ClutterActor *taskbar)
 		clutter_text_new_full ("Ubuntu 9", 
                                "Taskbar", 
                                clutter_color_new (0, 0, 0, 200));
-	clutter_actor_set_margin (text, lcs_wm_clutter_margin_new_full (4, 4, 0,0));
+	clutter_actor_set_margin (text, lcs_clutter_margin_new_full (4, 4, 0,0));
 	clutter_actor_add_child (buttons, text);
 	
 	button = lcs_taskbar_button_new ("window-close",

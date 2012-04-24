@@ -16,13 +16,13 @@ static void on_stage_drag_motion (ClutterDragAction *action,
                                   float dx,
                                   float dy)
 {    
-	lcs_wm_clutter_stage_move_by (CLUTTER_STAGE (actor), dx, dy);
+	lcs_clutter_stage_move_by (CLUTTER_STAGE (actor), dx, dy);
 }
 
 static int lcs_taskbar (int *argc, char ***argv)
 {
 	gdk_init (argc, argv);
-    lcs_wm_clutter_enable_transparency (TRUE);
+    lcs_clutter_enable_transparency (TRUE);
     gtk_init (argc, argv);
     if (!clutter_init (argc, argv))
     {
@@ -40,7 +40,7 @@ static int lcs_taskbar (int *argc, char ***argv)
                                         clutter_color_new (255, 255, 255, 96));
     ClutterActor *taskbar = lcs_taskbar_new ();    
     clutter_actor_set_margin (taskbar, 
-                              lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
+                              lcs_clutter_margin_new_full (4, 4, 4, 4));
     
     clutter_actor_add_child (stage, taskbar);
     g_signal_connect (stage, "destroy", G_CALLBACK (on_stage_destroy), NULL);

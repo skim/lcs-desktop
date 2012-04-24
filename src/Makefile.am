@@ -21,7 +21,9 @@ lcs_desktop_SOURCES = \
 	lcs-taskbar.c \
 	lcs-taskbar.h \
 	lcs-taskbar-task.c \
-	lcs-taskbar-buttons.c
+	lcs-taskbar-buttons.c \
+	lcs-clutter.c \
+	lcs-clutter.h
 
 lcs_desktop_LDFLAGS =  \
 	-o \

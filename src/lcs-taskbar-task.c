@@ -66,7 +66,7 @@ static void on_window_changed (WnckWindow *window, ClutterActor *task)
 	ClutterActor *icon = 
 		clutter_container_find_child_by_name(CLUTTER_CONTAINER (task), "icon");
 	GdkPixbuf *buf = wnck_window_get_icon (window);
-	lcs_wm_clutter_texture_set_from_pixbuf (CLUTTER_TEXTURE (icon), buf);
+	lcs_clutter_texture_set_from_pixbuf (CLUTTER_TEXTURE (icon), buf);
 }    
 
 static void lcs_task_connect (ClutterActor *task, WnckWindow *window)
@@ -107,7 +107,7 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
 	clutter_text_set_single_line_mode (CLUTTER_TEXT (name), TRUE);
 	clutter_text_set_ellipsize (CLUTTER_TEXT (name),
 	                            PANGO_ELLIPSIZE_END);
-	ClutterActor *wrap = lcs_wm_clutter_wrap_new (name,
+	ClutterActor *wrap = lcs_clutter_wrap_new (name,
 	                                              CLUTTER_BIN_ALIGNMENT_START,
 	                                              CLUTTER_BIN_ALIGNMENT_CENTER);
 	clutter_box_layout_pack (CLUTTER_BOX_LAYOUT (layout),
@@ -121,8 +121,8 @@ ClutterActor *lcs_task_new (WnckWindow *window, int connect)
 		lcs_task_connect (task, window);
 	on_window_changed (window, task);
 	clutter_actor_set_margin (task, 
-	                          lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
-	wrap = lcs_wm_clutter_wrap_new (task, CLUTTER_BIN_ALIGNMENT_FILL,
+	                          lcs_clutter_margin_new_full (4, 4, 4, 4));
+	wrap = lcs_clutter_wrap_new (task, CLUTTER_BIN_ALIGNMENT_FILL,
 	                                CLUTTER_BIN_ALIGNMENT_CENTER);
 	char *wrapstring = lcs_wm_wrap_xidstring_new (window);
 	clutter_actor_set_name (wrap, wrapstring);
