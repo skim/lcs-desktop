@@ -11,6 +11,15 @@ static void on_stage_destroy (ClutterActor *stage)
     clutter_main_quit ();
 }
 
+static void on_stage_drag_motion (ClutterDragAction *action,
+                                  ClutterActor *actor,
+                                  float dx,
+                                  float dy)
+{    
+	lcs_wm_clutter_stage_move_by (CLUTTER_STAGE (actor), dx, dy);
+}
+
+
 int main(int argc, char *argv[])
 {
     gdk_init (&argc, &argv);
@@ -36,6 +45,14 @@ int main(int argc, char *argv[])
     
     clutter_actor_add_child (stage, taskbar);
     g_signal_connect (stage, "destroy", G_CALLBACK (on_stage_destroy), NULL);
+
+	ClutterAction *drag = clutter_drag_action_new ();
+	g_signal_connect (drag, 
+	                  "drag-motion", 
+	                  G_CALLBACK (on_stage_drag_motion), 
+	                  NULL);
+	clutter_actor_add_action_with_name (stage, "drag", drag);
+	
     clutter_actor_show (stage);
     
     long stagexid = lcs_wm_get_stage_xid (CLUTTER_STAGE(stage));

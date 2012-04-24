@@ -13,6 +13,21 @@ typedef struct {
     unsigned long status;
 } MotifWMHints;
 
+void lcs_wm_clutter_stage_move_by (ClutterStage *stage, float x, float y) {
+	long xid = lcs_wm_get_stage_xid (stage);
+	WnckWindow *window = wnck_window_get (xid);
+	if (window)
+	{
+		int _x, _y, w, h;
+		wnck_window_get_geometry (window, &_x, &_y, &w, &h);
+		wnck_window_set_geometry (window, 
+		                          WNCK_WINDOW_GRAVITY_CURRENT,
+		                          WNCK_WINDOW_CHANGE_X | WNCK_WINDOW_CHANGE_Y,
+		                          _x + x, _y + y, w, h);
+	} else
+		fprintf (stderr, "unknown xid: %ld", xid);
+}
+
 void lcs_wm_clutter_actor_set_visible (ClutterActor *actor, int visible)
 {
     lcs_wm_gobject_set_boolean_property (actor, "visible", visible);
