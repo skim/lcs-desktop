@@ -79,7 +79,11 @@ ClutterActor *lcs_taskbar_new (int connect)
                              FALSE,
                              CLUTTER_BOX_ALIGNMENT_START,
                              CLUTTER_BOX_ALIGNMENT_START);
-                             
+
+    ClutterActor *minibuttons = lcs_taskbar_mini_buttons_new (TRUE, taskbar);
+    clutter_actor_add_child (taskbar, minibuttons);
+	lcs_wm_clutter_actor_set_visible (minibuttons, FALSE);
+    
     if (connect)
         lcs_taskbar_connect (taskbar);
         clutter_actor_set_reactive (taskbar, TRUE);

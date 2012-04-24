@@ -6,6 +6,7 @@
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
 
+void lcs_wm_clutter_actor_set_visible (ClutterActor *actor, int visible);
 
 char *lcs_wm_xidstring_new (WnckWindow *window);
 

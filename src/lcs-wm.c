@@ -13,6 +13,11 @@ typedef struct {
     unsigned long status;
 } MotifWMHints;
 
+void lcs_wm_clutter_actor_set_visible (ClutterActor *actor, int visible)
+{
+    lcs_wm_gobject_set_boolean_property (actor, "visible", visible);
+}
+
 char *lcs_wm_xidstring_new (WnckWindow *window)
 {
     return g_strdup_printf ("xid-%ld", wnck_window_get_xid (window));
@@ -108,7 +113,8 @@ void lcs_wm_clutter_texture_set_from_pixbuf_full (ClutterTexture *texture,
                                            NULL);
     if (!status)
         fprintf (stderr, "error setting texture data from pixbuf");
-    clutter_texture_set_sync_size (texture, TRUE);
+    //clutter_texture_set_sync_size (texture, TRUE);
+	clutter_texture_set_keep_aspect_ratio (CLUTTER_TEXTURE (texture), TRUE);
 }
 
 void lcs_wm_clutter_texture_set_from_pixbuf (ClutterTexture *texture,

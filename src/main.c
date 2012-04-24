@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
                                                  CLUTTER_BIN_ALIGNMENT_START));
     clutter_stage_set_use_alpha (CLUTTER_STAGE (stage), TRUE);
     clutter_actor_set_background_color (stage, 
-                                        clutter_color_new (0, 0, 0, 32));
+                                        clutter_color_new (255, 255, 255, 32));
     ClutterActor *taskbar = lcs_taskbar_new ();    
     clutter_actor_set_margin (taskbar, 
                               lcs_wm_clutter_margin_new_full (4, 4, 4, 4));
