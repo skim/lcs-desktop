@@ -6,6 +6,8 @@
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
 
+ClutterActor *lcs_wm_clutter_stage_new_stage_foreign (long xid);
+
 void lcs_wm_clutter_stage_move_by (ClutterStage *stage, float x, float y);
 
 void lcs_wm_clutter_actor_set_visible (ClutterActor *actor, int visible);
@@ -56,5 +58,7 @@ void lcs_wm_xwindow_set_above (long xid);
 void lcs_wm_xwindow_change_property (long xid,
                                     const char *property,
                                     const char *value);
+
+void lcs_wm_xwindow_set_dock (long xid);
 
 #endif /*MW_SCL _H */

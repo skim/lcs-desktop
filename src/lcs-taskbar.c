@@ -67,6 +67,7 @@ static void lcs_taskbar_connect (ClutterActor *actor)
 ClutterActor *lcs_taskbar_new (int connect)
 {
     ClutterActor *taskbar = clutter_actor_new ();
+	clutter_actor_set_name (taskbar, "taskbar");
     ClutterLayoutManager *layout = clutter_box_layout_new ();    
     clutter_box_layout_set_vertical (CLUTTER_BOX_LAYOUT (layout), TRUE);
     clutter_box_layout_set_spacing (CLUTTER_BOX_LAYOUT (layout), 2);

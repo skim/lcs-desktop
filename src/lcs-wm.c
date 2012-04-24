@@ -237,3 +237,10 @@ void lcs_wm_xwindow_set_above (long xid)
                                     "_NET_WM_STATE_ABOVE");
 }
 
+void lcs_wm_xwindow_set_dock (long xid)
+{
+	lcs_wm_xwindow_change_property(xid, 
+	                               "_NET_WM_WINDOW_TYPE",
+	                               "_NET_WM_WINDOW_TYPE_UTILITY");
+}
+
